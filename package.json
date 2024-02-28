@@ -30,12 +30,12 @@
   "license": "MIT",
   "preferences": [
     {
-      "name": "closeWindowOnAction",
-      "title": "Close window on action",
-      "description": "Close the Raycast window after performing an action",
+      "name": "shouldShuffleLikedSongs",
+      "title": "Shuffle Liked Songs",
+      "description": "Should Play the Liked Songs Playlist Shuffled",
       "type": "checkbox",
       "label": "Enabled",
-      "default": false,
+      "default": true,
       "required": false
     }
   ],
