@@ -6,6 +6,8 @@ Fork from Raycast's [Spotify Player](https://www.raycast.com/mattisssa/spotify-p
 
 I missed the ability to play my liked songs, so I added a command to play them and removed the other commands.
 
+I left the API functions for future use.
+
 ## Commands
 
 ### Play Liked Songs
