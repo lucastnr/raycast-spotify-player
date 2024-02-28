@@ -5,14 +5,15 @@ import { getMe } from "./api/getMe";
 import { shuffle } from "./api/shuffle";
 
 export default async function Command() {
-  const { shouldShuffleLikedSongs } = getPreferenceValues<{ shouldShuffleLikedSongs?: boolean }>();
+  const { shouldShuffleLikedSongs = false } = getPreferenceValues<{ shouldShuffleLikedSongs?: boolean }>();
 
   await setSpotifyClient();
 
   try {
     const meData = await getMe();
 
-    if (shouldShuffleLikedSongs) await shuffle(true);
+    // Update the shuffle state based on the user's preference
+    await shuffle(shouldShuffleLikedSongs);
 
     play({ contextUri: `spotify:user:${meData?.id}:collection` });
 
