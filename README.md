@@ -3,3 +3,9 @@
  </p>
 
 Fork from [Raycast's Spotify](https://www.raycast.com/mattisssa/spotify-player) Player extension.
+
+## Commands
+
+### Play Liked Songs
+
+A command to play your liked songs.
