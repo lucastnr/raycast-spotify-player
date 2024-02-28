@@ -2,7 +2,7 @@
    <img src="https://user-images.githubusercontent.com/372831/227213056-29a98faf-f897-4cd0-9c39-ca8f218a4190.png">
  </p>
 
-Fork from [Raycast's Spotify](https://www.raycast.com/mattisssa/spotify-player) Player extension.
+Fork from Raycast's [Spotify Player](https://www.raycast.com/mattisssa/spotify-player) extension.
 
 ## Commands
 
