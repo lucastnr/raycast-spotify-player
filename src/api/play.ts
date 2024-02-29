@@ -11,6 +11,7 @@ type PlayProps = {
   id?: string | undefined;
   type?: ContextTypes | undefined;
   contextUri?: string;
+  shuffle?: boolean;
 };
 
 const uriForType: Record<ContextTypes, string> = {
@@ -22,7 +23,8 @@ const uriForType: Record<ContextTypes, string> = {
   episode: "spotify:episode:",
 };
 
-export async function play({ id, type, contextUri }: PlayProps = {}) {
+export async function play(props: PlayProps = {}) {
+  const { id, type, contextUri, shuffle } = props;
   const { spotifyClient } = getSpotifyClient();
   const { devices } = await getMyDevices();
   const isSpotifyInstalled = await checkSpotifyApp();
@@ -34,11 +36,13 @@ export async function play({ id, type, contextUri }: PlayProps = {}) {
     const activeDevice = devices?.find((device) => device.is_active);
 
     if (!activeDevice && isSpotifyInstalled) {
-      await launchSpotifyAndPlay({ id, type });
+      await launchSpotifyAndPlay(props);
       return;
     }
 
     const deviceId = activeDevice?.id ?? devices?.[0]?.id ?? undefined;
+
+    if (typeof shuffle === "boolean") await spotifyClient.putMePlayerShuffle(shuffle);
 
     if (!type || !id) {
       await spotifyClient.putMePlayerPlay(
@@ -99,19 +103,43 @@ export async function play({ id, type, contextUri }: PlayProps = {}) {
   }
 }
 
-async function launchSpotifyAndPlay({ id, type }: { id?: string; type?: ContextTypes }) {
+const getShuffleScript = (state: boolean | undefined | null) => {
+  if (typeof state !== "boolean") {
+    return "";
+  }
+  return `set shuffling to ${state}`;
+};
+
+async function launchSpotifyAndPlay({ id, type, contextUri, shuffle }: PlayProps) {
   try {
-    if (!type || !id) {
-      const script = buildScriptEnsuringSpotifyIsRunning("play");
+    const shuffleScript = getShuffleScript(shuffle);
+
+    if (contextUri) {
+      console.log("on context uri thing");
+      const script = buildScriptEnsuringSpotifyIsRunning(`
+        play track "${contextUri}"
+        ${shuffleScript}
+      `);
+      await runAppleScript(script);
+    } else if (!type || !id) {
+      const script = buildScriptEnsuringSpotifyIsRunning(`
+        play
+        ${shuffleScript}
+      `);
       await runAppleScript(script);
     } else if (type === "track") {
-      const script = buildScriptEnsuringSpotifyIsRunning(`play track "${uriForType[type]}${id}"`);
+      const script = buildScriptEnsuringSpotifyIsRunning(`
+        play track "${uriForType[type]}${id}"
+        ${shuffleScript}  
+      `);
       await runAppleScript(script);
     } else {
       // For albums/artists/etc we seem to need a delay. Trying 1 second.
       const script = buildScriptEnsuringSpotifyIsRunning(`
         delay 1
-        play track "${uriForType[type]}${id}"`);
+        play track "${uriForType[type]}${id}"
+        ${shuffleScript}
+      `);
       await runAppleScript(script);
     }
   } catch (error) {
