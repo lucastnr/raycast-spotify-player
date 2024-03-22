@@ -15,7 +15,7 @@ export default async function Command() {
 
   try {
     const meData = await getMe();
-    await play({ contextUri: `spotify:user:${meData?.id}:collection`, shuffle: shouldShuffleLikedSongs });
+    play({ contextUri: `spotify:user:${meData?.id}:collection`, shuffle: shouldShuffleLikedSongs });
 
     await showHUD("Playing Liked Songs");
   } catch (error) {
